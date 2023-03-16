@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">PE_PRM391_Example_1</string>
+    <string name="username">User Name</string>
+    <string name="address">Address</string>
+    <string name="button_add">Add User</string>
+    <string name="button_update">Update</string>
+</resources>
