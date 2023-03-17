@@ -1,18 +1,19 @@
 package com.phunlh2001.pe_prm391_example_1;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.phunlh2001.pe_prm391_example_1.data.AppDatabase;
@@ -22,10 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private static final int MY_REQUEST_CODE = 10;
     private EditText editUsername, editAddress;
     private Button btnAdd;
     private RecyclerView rcvUser;
+    private TextView tvClear;
 
     private UserAdapter adapter;
     private List<User> mListUser;
@@ -37,7 +38,17 @@ public class MainActivity extends AppCompatActivity {
 
         init();
 
-        adapter = new UserAdapter(this::handleClickUpdate);
+        adapter = new UserAdapter(new UserAdapter.IClickItemUser() {
+            @Override
+            public void updateUser(User user) {
+                handleClickUpdate(user);
+            }
+
+            @Override
+            public void deleteUser(User user) {
+                handleClickDelete(user);
+            }
+        });
         mListUser = new ArrayList<>();
         adapter.setData(mListUser);
 
@@ -47,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         rcvUser.setAdapter(adapter);
 
         btnAdd.setOnClickListener(view -> addData());
+        
+        tvClear.setOnClickListener(view -> deleteAllData());
 
         loadData();
     }
@@ -56,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         editAddress = findViewById(R.id.edit_address);
         btnAdd = findViewById(R.id.btn_add);
         rcvUser = findViewById(R.id.rcv_user);
+        tvClear = findViewById(R.id.tv_clear);
     }
 
     private void addData() {
@@ -108,12 +122,33 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private void handleClickDelete(User user) {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirm delete user")
+                .setMessage("Are you sure?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    // delete here
+                    AppDatabase.getInstance(this).userDAO().delete(user);
+                    Toast.makeText(this, "Delete user successfully", Toast.LENGTH_SHORT).show();
 
-        if (resultCode == Activity.RESULT_OK) {
-            loadData();
-        }
+                    loadData();
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    private void deleteAllData() {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirm delete all user")
+                .setMessage("Are you sure?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    // delete here
+                    AppDatabase.getInstance(this).userDAO().deleteAll();
+                    Toast.makeText(this, "Delete all user successfully", Toast.LENGTH_SHORT).show();
+
+                    loadData();
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 }
