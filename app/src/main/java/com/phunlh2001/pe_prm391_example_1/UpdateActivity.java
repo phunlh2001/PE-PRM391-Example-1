@@ -26,7 +26,6 @@ public class UpdateActivity extends AppCompatActivity {
         editUsername = findViewById(R.id.edit_username);
         editAddress = findViewById(R.id.edit_address);
         Button btnUpdate = findViewById(R.id.btn_update);
-        Button btnBackHome = findViewById(R.id.backToHome);
 
         mUser = (User) getIntent().getExtras().get("user");
         if (mUser != null) {
@@ -35,7 +34,6 @@ public class UpdateActivity extends AppCompatActivity {
         }
 
         btnUpdate.setOnClickListener(view -> updateUser());
-        btnBackHome.setOnClickListener(view -> backToHome());
     }
 
     private void updateUser() {
@@ -49,10 +47,8 @@ public class UpdateActivity extends AppCompatActivity {
         mUser.setAddress(strAddress);
 
         AppDatabase.getInstance(this).userDAO().update(mUser);
-        Toast.makeText(this, "Update user successfully", Toast.LENGTH_SHORT).show();
-    }
+        Toast.makeText(this, "Update user successfully", Toast.LENGTH_LONG).show();
 
-    private void backToHome() {
         Intent intent = new Intent(UpdateActivity.this, MainActivity.class);
         startActivity(intent);
     }
