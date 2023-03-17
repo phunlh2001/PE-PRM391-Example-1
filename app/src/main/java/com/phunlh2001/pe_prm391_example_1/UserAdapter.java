@@ -16,10 +16,12 @@ import java.util.List;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
     private List<User> mListUser;
-    private IClickItemUser _clickItemUser;
+    private final IClickItemUser _clickItemUser;
 
     public interface IClickItemUser {
         void updateUser(User user);
+
+        void deleteUser(User user);
     }
 
     public UserAdapter(IClickItemUser _clickItemUser) {
@@ -47,9 +49,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         holder.tvUsername.setText(user.getUsername());
         holder.tvAddress.setText(user.getAddress());
 
-        holder.btnUpdate.setOnClickListener(view -> {
-            _clickItemUser.updateUser(user);
-        });
+        holder.btnUpdate.setOnClickListener(view -> _clickItemUser.updateUser(user));
+
+        holder.btnDelete.setOnClickListener(view -> _clickItemUser.deleteUser(user));
     }
 
     @Override
@@ -61,6 +63,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     public static class UserViewHolder extends RecyclerView.ViewHolder {
         private final TextView tvUsername, tvAddress;
         private final Button btnUpdate;
+        private final Button btnDelete;
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -68,6 +71,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             tvUsername = itemView.findViewById(R.id.tv_name);
             tvAddress = itemView.findViewById(R.id.tv_address);
             btnUpdate = itemView.findViewById(R.id.btn_update);
+            btnDelete = itemView.findViewById(R.id.btn_delete);
         }
     }
 }
